@@ -24,8 +24,8 @@ from heat_index import calculate_heat_index
 from internet_data import get_weather_data
 from display import display_loading_screen, display_data
 
-
-API_Key = '43f22249d3d42ec5daf08c4384ca809b'
+# Your API Key
+API_Key = '***************************'
 
 # Initialize the board
 Board().begin()
@@ -71,7 +71,7 @@ def loop():
     elevation = SEN0501.get_elevation()
     heat_index = calculate_heat_index(temperature, humidity)
 
-    # Get GPS data if the satellite count is sufficient
+    # Get GNSS data if the satellite count is sufficient
     latitude, longitude, altitude = None, None, None
     current_date, current_time = None, None
     if num_satellites > MINIMUM_SATELLITES:
@@ -93,36 +93,16 @@ def loop():
     if wifi_connected:
         air_quality, wind_speed, wind_direction, sunrise, sunset, clouds = get_weather_data(latitude, longitude, API_Key)
 
-    # Print sensor data to the console
-    print(f"Date: {current_date}")
-    print(f"Time: {current_time}")
-    print(f"Temperature: {temperature} 'C")
-    print(f"Humidity: {humidity} %")
-    print(f"Ultraviolet intensity: {uv_intensity} mw/cm2")
-    print(f"Luminous intensity: {light_intensity} lx")
-    print(f"Atmospheric pressure: {pressure} hpa")
-    print(f"Elevation: {elevation} m")
-    print(f"Latitude: {latitude}")
-    print(f"Longitude: {longitude}")
-    print(f"Altitude: {altitude}")
-    print(f"Heat Index: {heat_index}")
-    print(f"Satellites: {num_satellites}")
-    print(f"Wi-Fi Status: {wifi_connected}")
     if wifi_connected:
-        print(f"Air Quality: {air_quality}")
-        print(f"Wind Speed: {wind_speed}")
-        print(f"Wind Diredction: {wind_direction}")
-        print(f"Sunrise: {sunrise}")
-        print(f"Sunset: {sunset}")
-        print(f"Clouds: {clouds}")
          # Evaluate environmental advance conditions based on sensor and internet data
         rating, message = evaluate_advance_conditions(current_time, temperature, humidity, uv_intensity, light_intensity, pressure, elevation, heat_index, air_quality, wind_speed, wind_direction, clouds)
     else:
         # Evaluate environmental conditions based on sensor data
         rating, message = evaluate_conditions(temperature, humidity, uv_intensity, light_intensity, pressure, elevation, heat_index)
-    print("-------------------------------------")
-
+    # Display data
     display_data(wifi_connected, current_date, current_time, num_satellites, temperature, humidity, heat_index, light_intensity, uv_intensity, pressure, elevation, latitude, longitude, rating, message, air_quality, wind_speed, wind_direction, sunrise, sunset, clouds)
+    
+    # Log data into csv
     with open('data_log.csv', mode='a', newline='') as file:
         writer = csv.writer(file)
         writer.writerow([wifi_connected, current_date, current_time, num_satellites, temperature, humidity, heat_index, light_intensity, uv_intensity, pressure, elevation, latitude, longitude, rating, message, air_quality, wind_speed, wind_direction, sunrise, sunset, clouds])
