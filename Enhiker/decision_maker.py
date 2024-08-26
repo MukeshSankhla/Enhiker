@@ -378,6 +378,6 @@ def evaluate_conditions(temperature, humidity, uv_intensity, light_intensity, pr
         message = "Hot conditions with intense UV exposure and sunlight; sun protection is needed."
 
     # Final Message
-    print(f"Rating: {rating}")
-    print(f"Message: {message}")
+    #print(f"Rating: {rating}")
+    #print(f"Message: {message}")
     return rating, message
